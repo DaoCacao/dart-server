@@ -94,10 +94,33 @@ void main(List<String> args) async {
   final ip = InternetAddress.anyIPv4;
 
   // Configure a pipeline that logs requests.
-  final _handler = Pipeline().addMiddleware(logRequests()).addHandler(_router);
+  final _handler = Pipeline()
+      .addMiddleware(fixCORS())
+      .addMiddleware(logRequests())
+      .addHandler(_router);
 
   // For running in containers, we respect the PORT environment variable.
   final port = int.parse(Platform.environment["PORT"] ?? "8080");
   final server = await serve(_handler, ip, port);
   print("Server listening on http://${server.address.host}:${server.port}");
+}
+
+Middleware fixCORS() {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': '*',
+  };
+  return createMiddleware(
+    requestHandler: (Request request) {
+      if (request.method == 'OPTIONS') {
+        return Response.ok(null, headers: corsHeaders);
+      } else {
+        return null;
+      }
+    },
+    responseHandler: (Response response) {
+      return response.change(headers: corsHeaders);
+    },
+  );
 }
