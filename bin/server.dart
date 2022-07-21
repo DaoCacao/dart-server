@@ -7,15 +7,25 @@ import 'package:shelf_router/shelf_router.dart';
 // Configure routes.
 final _router = Router()
   ..get('/', _rootHandler)
-  ..get('/echo/<message>', _echoHandler);
+  ..get('/echo/<message>', _echoHandler)
+  ..get('/rickroll', _rickrollHandler);
 
-Response _rootHandler(Request req) {
+Response _rootHandler(Request request) {
   return Response.ok('Hello, World!\n');
 }
 
 Response _echoHandler(Request request) {
   final message = params(request, 'message');
   return Response.ok('$message\n');
+}
+
+Response _rickrollHandler(Request request) {
+  return Response.ok(
+    File('runtime/rickroll.html').readAsStringSync(),
+    headers: {
+      'Content-Type': 'text/html',
+    },
+  );
 }
 
 void main(List<String> args) async {
