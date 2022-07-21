@@ -18,5 +18,4 @@ COPY --from=build /app/bin/server /app/bin/
 
 # Start server
 EXPOSE 8080
-CMD ["/app/bin/server"]
-CMD ["echo","Hello"]
+CMD /app/bin/server
