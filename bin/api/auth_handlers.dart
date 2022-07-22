@@ -59,8 +59,9 @@ Future<Response> signInHandler(
   Request request,
   SignInUseCase signInUseCase,
 ) async {
-  final username = request.params["username"].toString();
-  final password = request.params["password"].toString();
+  final body = jsonDecode(await request.readAsString());
+  final username = body["username"]?.toString() ?? "";
+  final password = body["password"]?.toString() ?? "";
 
   if (username.isEmpty || password.isEmpty) {
     return Response(
