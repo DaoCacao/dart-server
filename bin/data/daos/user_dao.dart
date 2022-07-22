@@ -10,13 +10,18 @@ class UserDao {
   UserDao(this._users);
 
   Future<User> createUser(String username, String password) async {
-    final id = _users.map((e) => e.id).reduce(max) + 1;
+    int id;
+    try {
+      id = _users.map((e) => e.id).reduce(max) + 1;
+    } catch (e) {
+      id = 1;
+    }
     final user = UserEntity(
       id: id,
       username: username,
       password: password,
     );
-    _users[user.id] = user;
+    _users.add(user);
     return mapUser(user);
   }
 
