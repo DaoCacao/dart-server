@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import "package:http/http.dart";
-import "package:test/test.dart";
-import "package:test_process/test_process.dart";
+import 'package:http/http.dart';
+import 'package:test/test.dart';
+import 'package:test_process/test_process.dart';
 
 void main() {
   final port = "8080";
@@ -14,12 +14,6 @@ void main() {
       ["run", "bin/server.dart"],
       environment: {"PORT": port},
     );
-  });
-
-  test("Root", () async {
-    final response = await get(Uri.parse("$host/"));
-    expect(response.statusCode, 200);
-    expect(response.body, "Hello, World!");
   });
 
   test("Sign up with valid params returns 200 and token", () async {
@@ -63,5 +57,24 @@ void main() {
     );
     expect(response.statusCode, 400);
     expect(response.body, "Password is required");
+  });
+
+  test("Sign up without password returns 400", () async {
+    await post(
+      Uri.parse("$host/sign_up"),
+      body: jsonEncode({
+        "username": "username",
+        "password": "password",
+      }),
+    );
+    final response = await post(
+      Uri.parse("$host/sign_up"),
+      body: jsonEncode({
+        "username": "username",
+        "password": "password",
+      }),
+    );
+    expect(response.statusCode, 400);
+    expect(response.body, "User already exist");
   });
 }
