@@ -1,5 +1,7 @@
 .dockerignore
-Dockerfile
+docker-compose.yml
+envoy.Dockerfile
+server.Dockerfile
 build/
 .dart_tool/
 .git/
