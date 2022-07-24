@@ -1,6 +1,8 @@
+import 'dart:async';
 import "dart:io";
 
 import 'package:grpc/grpc.dart' as grpc;
+import 'package:grpc/grpc.dart';
 
 import 'data/daos/user_dao.dart';
 import 'data/daos/user_to_token_dao.dart';
@@ -15,7 +17,7 @@ void main(List<String> args) async {
   final env = Platform.environment;
 
   final ip = InternetAddress.anyIPv4;
-  final port = int.parse(env["PORT"] ?? "8080");
+  final port = int.parse(env["PORT"] ?? "7070");
   final jwtSecretKey = env["JWT_SECRET_KEY"] ?? "jwt_secret_key";
 
   final database = Database(
@@ -34,9 +36,21 @@ void main(List<String> args) async {
       ),
       PingGrpc(),
     ],
+    [loggerInterceptor],
   );
 
   await server.serve(address: ip.address, port: port);
 
   print("Server listening on http://${ip.address}:${server.port}");
+}
+
+FutureOr<GrpcError?> loggerInterceptor(
+  ServiceCall call,
+  ServiceMethod method,
+) async {
+  print(
+    "request:${method.name}\n"
+    "headers: ${call.headers}\n"
+    "trailers: ${call.trailers}",
+  );
 }
