@@ -1,0 +1,19 @@
+syntax = "proto3";
+package base;
+
+enum ResultStatus {
+  UNKNOWN = 0;
+  OK = 1;
+  UNAUTHORIZED = 2;
+  NOT_FOUND = 3;
+  ERROR = 6;
+}
+
+message Result {
+  ResultStatus status = 1;
+  string message = 2;
+}
+
+message Headers {
+  string token = 1;
+}

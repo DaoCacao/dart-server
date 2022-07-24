@@ -1,7 +1,7 @@
 import '../domain/models/user.dart';
-import 'responses/user_response.dart';
+import '../gen/api.pb.dart';
 
-UserResponse mapUser(User user) => UserResponse(
+UserRaw mapUser(User user) => UserRaw(
       id: user.id,
       username: user.username,
     );

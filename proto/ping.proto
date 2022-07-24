@@ -1,0 +1,16 @@
+syntax = "proto3";
+package ping;
+import "base.proto";
+
+service Ping {
+  rpc Echo(EchoRequest) returns (EchoResponse);
+}
+
+message EchoRequest{
+  base.Headers headers = 1;
+  string message = 2;
+}
+message EchoResponse{
+  base.Result result = 1;
+  string message = 2;
+}

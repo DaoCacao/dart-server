@@ -1,0 +1,30 @@
+syntax = "proto3";
+package auth;
+import "base.proto";
+import "entities.proto";
+
+service Auth {
+  rpc SignUp(SignUpRequest) returns (SignUpResponse);
+  rpc SignIn(SignInRequest) returns (SignInResponse);
+}
+message SignUpRequest {
+  base.Headers headers = 1;
+  string username = 2;
+  string passworrd = 3;
+}
+message SignUpResponse {
+  base.Result result = 1;
+  string token = 2;
+  entities.UserRaw user = 3;
+}
+
+message SignInRequest {
+  base.Headers headers = 1;
+  string username = 2;
+  string password = 3;
+}
+message SignInResponse {
+  base.Result result = 1;
+  string token = 2;
+  entities.UserRaw user = 3;
+}

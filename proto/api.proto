@@ -1,0 +1,63 @@
+syntax = "proto3";
+//base
+enum ResultStatus {
+  UNKNOWN = 0;
+  OK = 1;
+  UNAUTHORIZED = 2;
+  NOT_FOUND = 3;
+  ERROR = 6;
+}
+message Result {
+  ResultStatus status = 1;
+  string message = 2;
+}
+message Headers {
+  string token = 1;
+}
+
+//entities
+message UserRaw {
+  int32 id = 1;
+  string username = 2;
+}
+
+//auth
+service Auth {
+  rpc SignUp(SignUpRequest) returns (SignUpResponse);
+  rpc SignIn(SignInRequest) returns (SignInResponse);
+}
+message SignUpRequest {
+  Headers headers = 1;
+  string username = 2;
+  string passworrd = 3;
+}
+message SignUpResponse {
+  Result result = 1;
+  string token = 2;
+  UserRaw user = 3;
+}
+
+message SignInRequest {
+  Headers headers = 1;
+  string username = 2;
+  string password = 3;
+}
+message SignInResponse {
+  Result result = 1;
+  string token = 2;
+  UserRaw user = 3;
+}
+
+//ping
+service Ping {
+  rpc Echo(EchoRequest) returns (EchoResponse);
+}
+
+message EchoRequest{
+  Headers headers = 1;
+  string message = 2;
+}
+message EchoResponse{
+  Result result = 1;
+  string message = 2;
+}

@@ -1,21 +1,20 @@
 import "dart:io";
 
-import "package:shelf/shelf.dart";
-import "package:shelf/shelf_io.dart";
+import 'package:grpc/grpc.dart' as grpc;
 
-import 'cors_middleware.dart';
 import 'data/daos/user_dao.dart';
 import 'data/daos/user_to_token_dao.dart';
 import 'data/database.dart';
 import 'domain/use_cases/sign_in_use_case.dart';
 import 'domain/use_cases/sign_up_use_case.dart';
-import 'routes.dart';
+import 'grpc/auth.dart';
+import 'grpc/ping.dart';
 import 'token_manager.dart';
 
 void main(List<String> args) async {
   final env = Platform.environment;
 
-  final host = InternetAddress.anyIPv4;
+  final ip = InternetAddress.anyIPv4;
   final port = int.parse(env["PORT"] ?? "8080");
   final jwtSecretKey = env["JWT_SECRET_KEY"] ?? "jwt_secret_key";
 
@@ -23,21 +22,21 @@ void main(List<String> args) async {
     userDao: UserDao([]),
     userToTokenDao: UserToTokenDao([]),
   );
-  final tokenManager = TokenManager(
-    secretKey: jwtSecretKey,
-  );
+  final tokenManager = TokenManager(secretKey: jwtSecretKey);
   final signUpUseCase = SignUpUseCase(database, tokenManager);
   final signInUseCase = SignInUseCase(database, tokenManager);
 
-  final _handler = Pipeline()
-      .addMiddleware(corsMiddleware())
-      .addMiddleware(logRequests())
-      .addHandler(router(
+  final server = grpc.Server(
+    [
+      AuthGrpc(
         signUpUseCase: signUpUseCase,
         signInUseCase: signInUseCase,
-      ));
+      ),
+      PingGrpc(),
+    ],
+  );
 
-  final server = await serve(_handler, host, port);
+  await server.serve(address: ip.address, port: port);
 
-  print("Server listening on http://${server.address.host}:${server.port}");
+  print("Server listening on http://${ip.address}:${server.port}");
 }

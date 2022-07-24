@@ -9,9 +9,8 @@ environment:
 
 dependencies:
   args: ^2.0.0
-  shelf: ^1.1.0
-  shelf_router: ^1.0.0
-  shelf_static: ^1.1.1
+  grpc: ^3.0.2
+  protobuf: ^2.1.0
   dart_jsonwebtoken: ^2.4.1
 
 dev_dependencies:
